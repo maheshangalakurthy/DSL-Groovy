@@ -1,8 +1,9 @@
-pipelineJob('mahesh-test') {
+
+pipelineJob('maheshtest') {
 
 	parameters {
-        booleanParam('FLAG', true)
-        choiceParam(''where to run, ['Docker (default)', 'AIX', 'Both'])
+        booleanParam('FLAG', true,'select true')
+        choiceParam('where to run', ['Docker (default)', 'AIX', 'Both'],'selectone')
 		stringParam('hostname','0494','selected host to run)
     }
 	
