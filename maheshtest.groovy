@@ -9,7 +9,7 @@ pipelineJob('maheshtest') {
 	
     definition {
         cps {
-            script(readFileFromWorkspace('maheshtest.groovy'))
+            //script(readFileFromWorkspace('maheshtest.groovy'))
             sandbox()
         }
     }
