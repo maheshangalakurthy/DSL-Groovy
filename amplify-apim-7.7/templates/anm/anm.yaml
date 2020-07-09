@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    apigw.version: 7.7-20200530
+    apigw.editor: Wipro
+  labels:
+    app: anm
+  name: anm
+  namespace: axway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: anm
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: anm
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node
+                operator: In
+                values: 
+                - apimpool
+      containers:
+      - name: anm
+        image: assuperaxway.azurecr.io/adminnode-manager:1.0 
+        imagePullPolicy: Always
+        env:
+        - name: GW_DIR
+          value: /opt/Axway/apigateway
+        - name: GW_TRACE_DIR
+          value: /opt/Axway/apigateway/trace
+        
+        args:
+          - /opt/Axway/apigateway/posix/bin/start-emt-nodemanager
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8091
+          protocol: TCP
+        resources:
+          limits:
+            memory: "2048Mi"
+            cpu: "1000m"
+          requests:
+            memory: "1Gi"
+            cpu: "250m" 
+        livenessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: liveness.anm
+            path: /login
+            port: 8090
+            scheme: HTTPS
+          initialDelaySeconds: 40
+          periodSeconds: 30
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            httpHeaders:
+            - name: k8sprobe
+              value: readiness.anm
+            path: /login
+            port: 8090
+            scheme: HTTPS
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 6
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep","90"]
+        volumeMounts:
+        - name: anm-volume
+          mountPath: /opt/Axway/apigateway/events
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        resources: {}
+      imagePullSecrets:
+      - name: axwayacr
+      
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 101
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      volumes:
+        - name: anm-volume
+          persistentVolumeClaim:
+            claimName: anm-azurefile
+
+

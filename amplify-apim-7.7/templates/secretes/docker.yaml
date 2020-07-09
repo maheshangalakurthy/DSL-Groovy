@@ -1,0 +1,9 @@
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJhc3N1cGVyYXh3YXkuYXp1cmVjci5pbyI6eyJ1c2VybmFtZSI6ImFzc3VwZXJheHdheSIsInBhc3N3b3JkIjoib1IrTFJHVW9UaUhXaUJYeDZEZVNHb2pRWS9VcWZzcm8iLCJhdXRoIjoiWVhOemRYQmxjbUY0ZDJGNU9tOVNLMHhTUjFWdlZHbElWMmxDV0hnMlJHVlRSMjlxVVZrdlZYRm1jM0p2In19fQ==
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: axwayacr
+  namespace: axway
+type: kubernetes.io/dockerconfigjson

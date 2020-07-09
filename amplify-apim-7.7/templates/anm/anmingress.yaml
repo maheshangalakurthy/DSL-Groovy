@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: anm
+  namespace: axway
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    #service.beta.kubernetes.io/azure-load-balancer-internal: "true" for Internal LB
+spec:
+  tls:
+  - hosts:
+    - anm.axway.apim
+    secretName: tls-secret-anm
+  rules:
+  - host: anm.axway.apim
+    http: 
+      paths:
+      - backend: 
+          serviceName: anm
+          servicePort: 8090
+        path: /
